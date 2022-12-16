@@ -5,10 +5,10 @@ import { registerValidator, loginValidator, postCreateValidator } from './valida
 import { PostControler, UserControler } from './controlers/index.js'
 import { checkAuth, handleValidationErrors } from './utils/index.js'
 import cors from 'cors'
+import { request } from 'http'
 
-mongoose.connect('mongodb+srv://Windy:www@cluster0.5a2c3xu.mongodb.net/blog?retryWrites=true&w=majority')
-.then(() => console.log('DB ok'))
-.catch((err) => console.log('DB error', err))
+import https from 'https';
+import fs from 'fs';
 
 const app = express()
 
@@ -49,7 +49,15 @@ app.get('/', (req, res) => {
   res.send('Hello world')
 })
 
-app.listen(3333, (err) => {
+
+
+https.createServer({
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+}, app).listen(process.env.PORT || 3333, (err) => {
+  mongoose.connect('mongodb+srv://Windy:www@cluster0.5a2c3xu.mongodb.net/blog?retryWrites=true&w=majority')
+  .then(() => console.log('DB ok'))
+  .catch((err) => console.log('DB error', err))
   if (err) {
     return console.log(err)
   }
